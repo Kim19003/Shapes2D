@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -13,6 +14,14 @@ namespace Shapes2D.Drawing
         /// Primitives in this collection will be drawn each update, as long as a primitive's Visible property is set to true.
         /// </summary>
         public Collection<Primitive> Primitives { get; } = new Collection<Primitive>();
+
+        /// <summary>
+        /// Set the View Matrix to be used when drawing this PrimitiveBatch.
+        /// </summary>
+        public Matrix ViewMatrix
+        {
+            set => basicEffect.View = value;
+        }
 
         /// <summary>
         /// Set the World Matrix to be used when drawing this PrimitiveBatch.
@@ -58,15 +67,25 @@ namespace Shapes2D.Drawing
         {
             base.Draw(gameTime);
 
+            DrawPrimitives(Primitives);
+        }
+
+        public void DrawPrimitive(Primitive primitive)
+        {
+            DrawPrimitives(new() { primitive });
+        }
+
+        public void DrawPrimitives(Collection<Primitive> primitives)
+        {
             var visible = false;
             var lineVertices = new Collection<VertexPositionColor>();
             var lineIndices = new Collection<int>();
             var triangleVertices = new Collection<VertexPositionColor>();
             var triangleIndices = new Collection<int>();
 
-            for (var i = 0; i < Primitives.Count; i++)
+            for (var i = 0; i < primitives.Count; i++)
             {
-                var primitive = Primitives[i];
+                var primitive = primitives[i];
 
                 var shape = primitive as Shape;
 
